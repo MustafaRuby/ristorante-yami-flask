@@ -96,7 +96,7 @@ python app.py
 ## 💻 Utilizzo
 
 ### 🍽 Accesso Cliente
-1. Accedi con il numero del tuo tavolo e la password fornita (attualmente 'password'+numerotavolo)
+1. Accedi con il numero del tuo tavolo e la password fornita (attualmente `'password'+numerotavolo`)
 2. Sfoglia il menu e seleziona i piatti desiderati
 3. Specifica le quantità e conferma l'ordine
 4. Monitora lo stato dei tuoi ordini nella sezione "I tuoi Ordini"
