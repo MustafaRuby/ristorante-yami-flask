@@ -2,7 +2,7 @@
 
 [Tavolo]: ID_tavolo (PK) [INT], numero_tavolo [INT], password [VARCHAR(100)]
 
-//Ci sono 100 tavoli
+//Ci sono 49 tavoli
 
 [Piatto]: ID_piatto (PK) [INT], nome [VARCHAR(100)], ingredienti [VARCHAR(500)], nome_immagine [VARCHAR(500)]
 
@@ -15,4 +15,3 @@
 [Admin]: ID_admin (PK) [INT], nome, password
 
 //Stato può essere "preparazione", e indica che l'ordine non è ancora stato completato. Se stato è "completato" significa che è finito il piatto. Se stato è "consegnato" indica che è stato consegnato al tavolo il piatto.
-
