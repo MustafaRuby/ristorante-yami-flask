@@ -1,3 +1,10 @@
+// Main JavaScript file for handling orders functionality (both chef and admin views)
+
+// Get configuration passed from the template
+const isAdmin = window.pageConfig ? window.pageConfig.isAdmin : false;
+const tavoloId = window.pageConfig ? window.pageConfig.tavoloId : null;
+
+// Create HTML for order cards - used by the auto-refresh for chef view
 function createOrderCard(ordine) {
     return `
         <div class="order-card">
@@ -22,7 +29,13 @@ function createOrderCard(ordine) {
     `;
 }
 
+// Generate action buttons based on order state - used by the auto-refresh for chef view
 function getActionButtons(ordine) {
+    // Don't show action buttons for admin users
+    if (isAdmin) {
+        return '';
+    }
+    
     if (ordine.stato.nome === 'preparazione') {
         return `
             <form action="/update_order_status" method="POST" style="display: inline;">
@@ -48,18 +61,36 @@ function getActionButtons(ordine) {
     return '';
 }
 
+// Fetch orders data from the server and update the UI
 async function updateOrders() {
-    try {
-        const response = await fetch('/get_orders_data');
-        if (!response.ok) throw new Error('Network response was not ok');
-        const ordini = await response.json();
-        
-        const ordersGrid = document.querySelector('.orders-grid');
-        ordersGrid.innerHTML = ordini.map(ordine => createOrderCard(ordine)).join('');
-    } catch (error) {
-        console.error('Error fetching orders:', error);
+    // Only update orders automatically if we're on the chef view
+    if (!isAdmin) {
+        try {
+            const response = await fetch('/get_orders_data');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const ordini = await response.json();
+            
+            const ordersGrid = document.querySelector('.orders-grid');
+            if (ordersGrid) {
+                ordersGrid.innerHTML = ordini.map(ordine => createOrderCard(ordine)).join('');
+            }
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
     }
 }
 
-// Aggiorna gli ordini ogni 5 secondi
-setInterval(updateOrders, 5000);
+// Initialize and set up auto-refresh
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on the chef page by looking for specific elements
+    const isChefPage = document.querySelector('.chef-header') && 
+                      !document.querySelector('.tavolo-info');
+    
+    if (isChefPage && !isAdmin) {
+        // Initial load
+        updateOrders();
+        
+        // Set up interval for chef view only
+        setInterval(updateOrders, 5000);
+    }
+});

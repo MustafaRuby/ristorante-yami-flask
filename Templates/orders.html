@@ -185,6 +185,66 @@
             color: white;
         }
 
+        .admin-controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .tavolo-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tavolo-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -199,24 +259,59 @@
                 gap: 15px;
                 text-align: center;
             }
+            
+            .admin-controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        {% if is_admin %}
+        <div class="chef-header">
+            <h1 class="chef-title">Admin: <span class="chef-name">{{ admin_name }}</span></h1>
+            <a href="{{ url_for('logout_admin') }}" class="logout-btn">Logout</a>
+        </div>
+        
+        <div class="tavolo-info">
+            <h2 class="tavolo-title">Tavolo #{{ tavolo.numero_tavolo }}</h2>
+            
+            <div class="admin-controls">
+                <a href="{{ url_for('tables') }}" class="admin-btn back-btn">
+                    <span>⬅️</span> Torna ai Tavoli
+                </a>
+                
+                <form action="{{ url_for('delete_tavolo_orders', tavolo_id=tavolo.id) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare tutti gli ordini di questo tavolo?');">
+                    <button type="submit" class="admin-btn delete-btn">
+                        <span>🗑️</span> Elimina Ordini del Tavolo
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
         <div class="chef-header">
             <h1 class="chef-title">Benvenuto, <span class="chef-name">{{ chef_name }}</span></h1>
             <a href="{{ url_for('logout_chef') }}" class="logout-btn">Logout</a>
         </div>
+        {% endif %}
         
         <div class="orders-grid">
             {% for ordine in ordini %}
             <div class="order-card">
                 <div class="order-header">
+                    {% if not is_admin %}
                     <h3>Tavolo #{{ ordine.tavolo_numero }}</h3>
+                    {% else %}
+                    <h3>Ordine #{{ ordine.id }}</h3>
+                    {% endif %}
                 </div>
                 <div class="order-content">
+                    {% if not is_admin %}
                     <img src="{{ url_for('static', filename=ordine.piatto.immagine) }}" alt="{{ ordine.piatto.nome }}" class="order-image">
+                    {% else %}
+                    <img src="{{ url_for('static', filename=ordine.piatto.src_immagine) }}" alt="{{ ordine.piatto.nome }}" class="order-image">
+                    {% endif %}
                     <div class="order-details">
                         <div class="order-name">{{ ordine.piatto.nome }}</div>
                         <div class="order-quantity">Quantità: {{ ordine.quantita }}</div>
@@ -225,23 +320,30 @@
                         </div>
                         
                         <div class="status-actions">
-                            {% if ordine.stato.nome == 'preparazione' %}
-                            <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
-                                <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
-                                <input type="hidden" name="action" value="complete">
-                                <button type="submit" class="action-button complete-btn">Completa</button>
-                            </form>
-                            <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
-                                <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
-                                <input type="hidden" name="action" value="suspend">
-                                <button type="submit" class="action-button suspend-btn">Sospendi</button>
-                            </form>
-                            {% elif ordine.stato.nome == 'completato' %}
-                            <form action="{{ url_for('update_order_status') }}" method="POST">
-                                <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
-                                <input type="hidden" name="action" value="deliver">
-                                <button type="submit" class="action-button deliver-btn">Consegna</button>
-                            </form>
+                            {% if not is_admin %}
+                                {% if ordine.stato.nome == 'preparazione' %}
+                                <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="complete">
+                                    <button type="submit" class="action-button complete-btn">Completa</button>
+                                </form>
+                                <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="suspend">
+                                    <button type="submit" class="action-button suspend-btn">Sospendi</button>
+                                </form>
+                                {% elif ordine.stato.nome == 'completato' %}
+                                <form action="{{ url_for('update_order_status') }}" method="POST">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="deliver">
+                                    <button type="submit" class="action-button deliver-btn">Consegna</button>
+                                </form>
+                                {% endif %}
+                            {% else %}
+                                <form action="{{ url_for('delete_single_order', ordine_id=ordine.id, tavolo_id=tavolo.id) }}" method="POST" 
+                                      onsubmit="return confirm('Sei sicuro di voler eliminare questo ordine?');" style="display: inline;">
+                                    <button type="submit" class="action-button suspend-btn">Elimina Ordine</button>
+                                </form>
                             {% endif %}
                         </div>
                     </div>
@@ -250,72 +352,15 @@
             {% endfor %}
         </div>
     </div>
+    
     <script>
-        function createOrderCard(ordine) {
-            return `
-                <div class="order-card">
-                    <div class="order-header">
-                        <h3>Tavolo #${ordine.tavolo_numero}</h3>
-                    </div>
-                    <div class="order-content">
-                        <img src="/static/${ordine.piatto.immagine}" alt="${ordine.piatto.nome}" class="order-image">
-                        <div class="order-details">
-                            <div class="order-name">${ordine.piatto.nome}</div>
-                            <div class="order-quantity">Quantità: ${ordine.quantita}</div>
-                            <div class="order-status status-${ordine.stato.nome}">
-                                ${ordine.stato.nome.charAt(0).toUpperCase() + ordine.stato.nome.slice(1)}
-                            </div>
-                            
-                            <div class="status-actions">
-                                ${getActionButtons(ordine)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getActionButtons(ordine) {
-            if (ordine.stato.nome === 'preparazione') {
-                return `
-                    <form action="/update_order_status" method="POST" style="display: inline;">
-                        <input type="hidden" name="ordine_id" value="${ordine.id}">
-                        <input type="hidden" name="action" value="complete">
-                        <button type="submit" class="action-button complete-btn">Completa</button>
-                    </form>
-                    <form action="/update_order_status" method="POST" style="display: inline;">
-                        <input type="hidden" name="ordine_id" value="${ordine.id}">
-                        <input type="hidden" name="action" value="suspend">
-                        <button type="submit" class="action-button suspend-btn">Sospendi</button>
-                    </form>
-                `;
-            } else if (ordine.stato.nome === 'completato') {
-                return `
-                    <form action="/update_order_status" method="POST">
-                        <input type="hidden" name="ordine_id" value="${ordine.id}">
-                        <input type="hidden" name="action" value="deliver">
-                        <button type="submit" class="action-button deliver-btn">Consegna</button>
-                    </form>
-                `;
-            }
-            return '';
-        }
-
-        async function updateOrders() {
-            try {
-                const response = await fetch('/get_orders_data');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const ordini = await response.json();
-                
-                const ordersGrid = document.querySelector('.orders-grid');
-                ordersGrid.innerHTML = ordini.map(ordine => createOrderCard(ordine)).join('');
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        }
-
-        // Aggiorna gli ordini ogni 5 secondi
-        setInterval(updateOrders, 5000);
+        // Pass Jinja variables to JavaScript for use in orders.js
+        window.pageConfig = {
+            isAdmin: {% if is_admin %}true{% else %}false{% endif %},
+            {% if is_admin %}
+            tavoloId: {{ tavolo.id }}
+            {% endif %}
+        };
     </script>
     <script src="{{ url_for('static', filename='js/orders.js') }}"></script>
 </body>

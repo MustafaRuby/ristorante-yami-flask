@@ -58,6 +58,12 @@ def create_database():
             connection.execute("INSERT INTO chef (nome, password) VALUES (?, ?)", 
                             ("Soma", "passw0rd"))
             connection.commit()
+            
+        cursor = connection.execute("SELECT COUNT(*) FROM admin")
+        if cursor.fetchone()[0] == 0:
+            connection.execute("INSERT INTO admin (nome, password) VALUES (?, ?)", 
+                            ("Mostafa", "passw0rd"))
+            connection.commit()
 
 def autentica_tavolo(numero, password):
     with DB_connect() as connection:
@@ -71,6 +77,14 @@ def autentica_chef(nome, password):
     with DB_connect() as connection:
         cursor = connection.execute("""
             SELECT * FROM chef 
+            WHERE nome = ? AND password = ?
+        """, (nome, password))
+        return cursor.fetchone()
+
+def autentica_admin(nome, password):
+    with DB_connect() as connection:
+        cursor = connection.execute("""
+            SELECT * FROM admin 
             WHERE nome = ? AND password = ?
         """, (nome, password))
         return cursor.fetchone()
@@ -100,11 +114,21 @@ def get_piatto_id(id):
         cursor = connection.execute("SELECT * FROM piatto WHERE id = ?", (id,))
         return cursor.fetchone()
 
+def get_admin_id(id):
+    with DB_connect() as connection:
+        cursor = connection.execute("SELECT * FROM admin WHERE id = ?", (id,))
+        return cursor.fetchone()
+
 def get_tavolo_ordini(tavolo_id):
     with DB_connect() as connection:
         cursor = connection.execute("SELECT * FROM ordine WHERE ID_tavolo = ?", (tavolo_id,))
         return cursor.fetchall()
     
+def get_tavolo_ordini_by_id(tavolo_id):
+    with DB_connect() as connection:
+        cursor = connection.execute("SELECT * FROM ordine WHERE ID_tavolo = ?", (tavolo_id,))
+        return cursor.fetchall()
+
 def crea_ordine(tavolo_id, piatto_id, quantita):
     with DB_connect() as connection:
         connection.execute("INSERT INTO ordine (ID_tavolo, ID_piatto, ID_stato, quantita) VALUES (?, ?, 1, ?)", 
@@ -124,6 +148,43 @@ def consegna_ordine(ordine_id):
 def sospendi_ordine(ordine_id):
     with DB_connect() as connection:
         connection.execute("UPDATE ordine SET ID_stato = 4 WHERE id = ?", (ordine_id,))
+        connection.commit()
+
+def create_admin(nome, password):
+    with DB_connect() as connection:
+        connection.execute("INSERT INTO admin (nome, password) VALUES (?, ?)", 
+                         (nome, password))
+        connection.commit()
+
+def get_all_admins():
+    with DB_connect() as connection:
+        cursor = connection.execute("SELECT * FROM admin")
+        return cursor.fetchall()
+
+def create_chef(nome, password):
+    with DB_connect() as connection:
+        connection.execute("INSERT INTO chef (nome, password) VALUES (?, ?)", 
+                         (nome, password))
+        connection.commit()
+
+def get_all_chefs():
+    with DB_connect() as connection:
+        cursor = connection.execute("SELECT * FROM chef")
+        return cursor.fetchall()
+
+def delete_all_orders():
+    with DB_connect() as connection:
+        connection.execute("DELETE FROM ordine")
+        connection.commit()
+        
+def delete_tavolo_orders(tavolo_id):
+    with DB_connect() as connection:
+        connection.execute("DELETE FROM ordine WHERE ID_tavolo = ?", (tavolo_id,))
+        connection.commit()
+
+def delete_single_order(ordine_id):
+    with DB_connect() as connection:
+        connection.execute("DELETE FROM ordine WHERE id = ?", (ordine_id,))
         connection.commit()
 
 def get_ordini_completi(tavolo_id):
@@ -178,3 +239,9 @@ def get_all_ordini():
                 }
             })
         return ordini
+
+def add_piatto(nome, ingredienti, src_immagine):
+    with DB_connect() as connection:
+        connection.execute("INSERT INTO piatto (nome, ingredienti, src_immagine) VALUES (?, ?, ?)", 
+                         (nome, ingredienti, src_immagine))
+        connection.commit()

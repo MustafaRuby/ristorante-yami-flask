@@ -12,5 +12,7 @@
 
 [Chef]: ID_chef (PK) [INT], nome [VARCHAR], password
 
+[Admin]: ID_admin (PK) [INT], nome, password
+
 //Stato può essere "preparazione", e indica che l'ordine non è ancora stato completato. Se stato è "completato" significa che è finito il piatto. Se stato è "consegnato" indica che è stato consegnato al tavolo il piatto.
 

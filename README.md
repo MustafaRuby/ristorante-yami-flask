@@ -15,11 +15,11 @@
 - [Database](#-database)
 
 ## 🎯 Panoramica
-Yami è un sistema di gestione ordini per ristoranti di sushi che offre un'interfaccia intuitiva sia per i clienti che per lo staff della cucina. Il sistema permette ai clienti di effettuare ordini dal proprio tavolo e allo chef di gestire gli ordini in tempo reale.
+Yami è un sistema di gestione ordini per ristoranti di sushi che offre un'interfaccia intuitiva sia per i clienti che per lo staff della cucina. Il sistema permette ai clienti di effettuare ordini dal proprio tavolo, agli chef di gestire gli ordini in tempo reale e agli amministratori di supervisionare l'intero sistema.
 
 ## ✨ Funzionalità
 
-### 👥 Lato Cliente
+### 👩‍💼 Lato Cliente
 - **Login Tavolo**: Accesso sicuro tramite numero tavolo e password
 - **Menu Interattivo**: Visualizzazione dei piatti con immagini e descrizioni
 - **Gestione Ordini**: Possibilità di ordinare più piatti con quantità personalizzate
@@ -33,6 +33,13 @@ Yami è un sistema di gestione ordini per ristoranti di sushi che offre un'inter
   - Sospendere ordini problematici
 - **Visione d'Insieme**: Visualizzazione completa di tutti gli ordini attivi
 
+### 👥 Lato Amministrazione
+- **Gestione Tavoli**: Visualizzazione e gestione di tutti i tavoli
+- **Gestione Ordini**: Capacità di visualizzare e gestire gli ordini per ogni tavolo
+- **Eliminazione Ordini**: Possibilità di eliminare ordini singoli o multipli
+- **Gestione Utenti**: Registrazione di nuovi chef e amministratori
+- **Gestione Menu**: Aggiunta di nuovi piatti con immagini
+
 ## 🛠 Tecnologie Utilizzate
 - **Backend**: Python Flask
 - **Security**: Python Secrets
@@ -40,6 +47,8 @@ Yami è un sistema di gestione ordini per ristoranti di sushi che offre un'inter
 - **Frontend**: HTML5, CSS3, JavaScript (AJAX)
 - **Template Engine**: Jinja2
 - **Real-time Updates**: Polling System
+- **File Upload**: Werkzeug
+- **Error Handling**: Sistema robusto di gestione errori specifici
 
 ## 📂 Struttura del Progetto
 ```
@@ -97,6 +106,23 @@ python app.py
 2. Usa le credenziali fornite (default: Soma/passw0rd)
 3. Gestisci gli ordini in arrivo tramite i pulsanti di azione
 4. Monitora tutti gli ordini attivi in tempo reale con aggiornamenti automatici ogni 5 secondi
+
+### 👥 Accesso Admin
+1. Accedi all'area amministrazione tramite `/napafiniAdmin`
+2. Usa le credenziali fornite (default: Mostafa/passw0rd)
+3. Gestisci i tavoli dalla dashboard principale:
+   - Visualizza tutti i tavoli disponibili
+   - Accedi agli ordini specifici per ogni tavolo
+   - Elimina tutti gli ordini con un click
+4. Registra nuovi utenti:
+   - Aggiungi nuovi amministratori dal pannello "Registra Nuovo Admin"
+   - Aggiungi nuovi chef dal pannello "Registra Nuovo Chef"
+5. Gestisci il menu:
+   - Aggiungi nuovi piatti con immagini dalla sezione "Aggiungi Nuovo Piatto"
+   - Carica foto dei piatti che verranno salvate nella cartella uploads
+6. Gestisci gli ordini:
+   - Visualizza gli ordini per tavolo specifico
+   - Elimina ordini singoli o tutti gli ordini di un tavolo
 
 ## 🔄 Stati degli Ordini
 - **🟡 Preparazione**: Ordine ricevuto e in lavorazione

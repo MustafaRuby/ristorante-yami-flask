@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Tavoli - Ristorante Yami</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+        }
+
+        .admin-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .admin-name {
+            color: #800080;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #800080, #660066);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(128,0,128,0.3);
+        }
+
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px;
+        }
+
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background-color: #f8f4ff;
+        }
+
+        .table-icon {
+            font-size: 3rem;
+            color: #800080;
+            margin-bottom: 15px;
+        }
+
+        .table-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .actions-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-all-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .delete-all-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .register-btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .register-admin-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .register-admin-btn:hover {
+            background: #0069d9;
+            transform: translateY(-2px);
+        }
+
+        .register-chef-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .register-chef-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .add-plate-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .add-plate-btn:hover {
+            background: #ed8c00;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .tables-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 15px;
+            }
+            
+            .actions-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-header">
+            <h1 class="admin-title">Benvenuto, <span class="admin-name">{{ admin_name }}</span></h1>
+            <a href="{{ url_for('logout_admin') }}" class="logout-btn">Logout</a>
+        </div>
+        
+        <div class="actions-container">
+            <div class="admin-actions">
+                <a href="{{ url_for('register_admin_page') }}" class="register-btn register-admin-btn">
+                    <span>👤</span> Registra Nuovo Admin
+                </a>
+                <a href="{{ url_for('register_chef_page') }}" class="register-btn register-chef-btn">
+                    <span>👨‍🍳</span> Registra Nuovo Chef
+                </a>
+                <a href="{{ url_for('add_plate_page') }}" class="register-btn add-plate-btn">
+                    <span>🍣</span> Aggiungi Nuovo Piatto
+                </a>
+            </div>
+            
+            <form action="{{ url_for('delete_all_orders') }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare tutti gli ordini?');">
+                <button type="submit" class="delete-all-btn">Elimina tutti gli ordini</button>
+            </form>
+        </div>
+        
+        <div class="tables-grid">
+            {% for tavolo in tavoli %}
+            <a href="{{ url_for('admin_orders', tavolo_id=tavolo.id) }}" class="table-card">
+                <div class="table-icon">🍽️</div>
+                <div class="table-number">Tavolo {{ tavolo.numero_tavolo }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
