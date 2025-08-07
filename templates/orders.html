@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Ordini - Ristorante Yami</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chef-header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+        }
+
+        .chef-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .chef-name {
+            color: #800080;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #800080, #660066);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(128,0,128,0.3);
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .order-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #800080, #660066);
+            color: white;
+        }
+
+        .order-header h3 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .order-content {
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .order-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .order-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .order-quantity {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .order-status {
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .status-preparazione {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completato {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-consegnato {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .status-sospeso {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .complete-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .suspend-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .deliver-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .admin-controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .tavolo-info {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tavolo-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .orders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chef-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .admin-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if is_admin %}
+        <div class="chef-header">
+            <h1 class="chef-title">Admin: <span class="chef-name">{{ admin_name }}</span></h1>
+            <a href="{{ url_for('logout_admin') }}" class="logout-btn">Logout</a>
+        </div>
+        
+        <div class="tavolo-info">
+            <h2 class="tavolo-title">Tavolo #{{ tavolo.numero_tavolo }}</h2>
+            
+            <div class="admin-controls">
+                <a href="{{ url_for('tables') }}" class="admin-btn back-btn">
+                    <span>⬅️</span> Torna ai Tavoli
+                </a>
+                
+                <form action="{{ url_for('delete_tavolo_orders', tavolo_id=tavolo.id) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare tutti gli ordini di questo tavolo?');">
+                    <button type="submit" class="admin-btn delete-btn">
+                        <span>🗑️</span> Elimina Ordini del Tavolo
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="chef-header">
+            <h1 class="chef-title">Benvenuto, <span class="chef-name">{{ chef_name }}</span></h1>
+            <a href="{{ url_for('logout_chef') }}" class="logout-btn">Logout</a>
+        </div>
+        {% endif %}
+        
+        <div class="orders-grid">
+            {% for ordine in ordini %}
+            <div class="order-card">
+                <div class="order-header">
+                    {% if not is_admin %}
+                    <h3>Tavolo #{{ ordine.tavolo_numero }}</h3>
+                    {% else %}
+                    <h3>Ordine #{{ ordine.id }}</h3>
+                    {% endif %}
+                </div>
+                <div class="order-content">
+                    {% if not is_admin %}
+                    <img src="{{ url_for('static', filename=ordine.piatto.immagine) }}" alt="{{ ordine.piatto.nome }}" class="order-image">
+                    {% else %}
+                    <img src="{{ url_for('static', filename=ordine.piatto.src_immagine) }}" alt="{{ ordine.piatto.nome }}" class="order-image">
+                    {% endif %}
+                    <div class="order-details">
+                        <div class="order-name">{{ ordine.piatto.nome }}</div>
+                        <div class="order-quantity">Quantità: {{ ordine.quantita }}</div>
+                        <div class="order-status status-{{ ordine.stato.nome }}">
+                            {{ ordine.stato.nome|title }}
+                        </div>
+                        
+                        <div class="status-actions">
+                            {% if not is_admin %}
+                                {% if ordine.stato.nome == 'preparazione' %}
+                                <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="complete">
+                                    <button type="submit" class="action-button complete-btn">Completa</button>
+                                </form>
+                                <form action="{{ url_for('update_order_status') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="suspend">
+                                    <button type="submit" class="action-button suspend-btn">Sospendi</button>
+                                </form>
+                                {% elif ordine.stato.nome == 'completato' %}
+                                <form action="{{ url_for('update_order_status') }}" method="POST">
+                                    <input type="hidden" name="ordine_id" value="{{ ordine.id }}">
+                                    <input type="hidden" name="action" value="deliver">
+                                    <button type="submit" class="action-button deliver-btn">Consegna</button>
+                                </form>
+                                {% endif %}
+                            {% else %}
+                                <form action="{{ url_for('delete_single_order', ordine_id=ordine.id, tavolo_id=tavolo.id) }}" method="POST" 
+                                      onsubmit="return confirm('Sei sicuro di voler eliminare questo ordine?');" style="display: inline;">
+                                    <button type="submit" class="action-button suspend-btn">Elimina Ordine</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script>
+        // Pass Jinja variables to JavaScript for use in orders.js
+        window.pageConfig = {
+            isAdmin: {% if is_admin %}true{% else %}false{% endif %},
+            {% if is_admin %}
+            tavoloId: {{ tavolo.id }}
+            {% endif %}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/orders.js') }}"></script>
+</body>
+</html>
