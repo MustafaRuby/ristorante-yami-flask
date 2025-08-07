@@ -52,22 +52,40 @@ Yami è un sistema di gestione ordini per ristoranti di sushi che offre un'inter
 
 ## 📂 Struttura del Progetto
 ```
-Risotrante Yami - Flask/
-├── app.py                 # Application entry point
-├── db_manager.py         # Database operations
+ristorante-yami-flask/
+├── app.py                  # Application entry point (Flask app)
+├── db_manager.py           # Database operations (SQLite)
+├── requirements.txt        # Python dependencies
+├── README.md               # Project documentation
 ├── Database/
-│   └── db.sql           # Database schema
+│   ├── db.md               # Database documentation
+│   └── db.sql              # Database schema
 ├── static/
-│   ├── images/          # Product images
+│   ├── images/             # Product images (sushi, piatti)
+│   │   ├── gunkan_salmone.jpg
+│   │   ├── gunkan_tonno.jpg
+│   │   ├── nigiri_gambero.jpg
+│   │   ├── nigiri_salmone.jpg
+│   │   ├── nigiri_tonno.jpg
+│   │   ├── sake_salmone.jpg
+│   │   ├── sake_tonno.jpg
+│   │   ├── sashimi_salmone.jpg
+│   │   ├── sashimi_tonno.jpg
+│   │   └── takito_salmone.jpg
 │   └── js/
-│       └── orders.js    # Real-time order management
-└── Templates/
-    ├── login.html       # Customer login
-    ├── loginChef.html   # Chef login
-    ├── menu.html        # Menu display
-    ├── cart.html        # Order tracking
-    ├── orders.html      # Chef dashboard
-    └── errPage.html     # Error handling
+│       └── orders.js       # Real-time order management (polling)
+└── templates/
+    ├── addPlate.html       # Add new plate (admin)
+    ├── cart.html           # Order tracking (customer)
+    ├── errPage.html        # Error handling
+    ├── login.html          # Customer login
+    ├── loginAdmin.html     # Admin login
+    ├── loginChef.html      # Chef login
+    ├── menu.html           # Menu display
+    ├── orders.html         # Orders dashboard (chef/admin)
+    ├── registerAdmin.html  # Register new admin
+    ├── registerChef.html   # Register new chef
+    └── tables.html         # Table management (admin)
 ```
 
 ## 🚀 Setup e Installazione
@@ -154,3 +172,4 @@ Il sistema utilizza SQLite con le seguenti tabelle:
 <div align="center">
   <p>Sviluppato con ❤️ per la ristorazione moderna</p>
 </div>
+
